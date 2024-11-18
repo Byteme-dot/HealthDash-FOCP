@@ -1,0 +1,5 @@
+Name: amanu 
+Age=18 
+Height=170
+Day1 : Weight=75 - Calorie Burnt=400 - Calorie Intake=2000 
+Day2 : Weight=78 - Calorie Burnt=200 - Calorie Intake=3000 
