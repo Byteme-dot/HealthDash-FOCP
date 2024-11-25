@@ -23,7 +23,7 @@ void user_input(){
     FILE *fptr;
     fptr=fopen("user_info.txt","w");
     printf("Enter User Name: ");
-    scanf(" %s",&name);
+    fgets(name,31,stdin);
     printf("Enter your age: ");
     scanf(" %d",&age);
     printf("Enter your height: ");
@@ -43,8 +43,8 @@ void user_input(){
         scanf(" %d",&days[i].calorie_intake);
         fprintf(fptr,"Day%d : Weight=%d - Calorie Burnt=%d - Calorie Intake=%d \n",days[i].day,days[i].weight,days[i].calorie_burn,days[i].calorie_intake);
     }
+    // free(fptr);
     fclose(fptr);
-    free(fptr);
 }
 void user_info_print(){
     for(int i=0;i<global_choice;i++){
