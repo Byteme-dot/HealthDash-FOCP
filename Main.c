@@ -23,7 +23,8 @@ void user_input(){
     FILE *fptr;
     fptr=fopen("user_info.txt","w");
     printf("Enter User Name: ");
-    fgets(name,31,stdin);
+    scanf("%[^\n]",&name);
+    
     printf("Enter your age: ");
     scanf(" %d",&age);
     printf("Enter your height: ");

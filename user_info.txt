@@ -1,6 +1,3 @@
-Name: Abhishek Kumar
- 
-Age=20Y 
-Height=175cm
-Day1 : Weight=76 - Calorie Burnt=500 - Calorie Intake=2000 
-Day2 : Weight=75 - Calorie Burnt=700 - Calorie Intake=2000 
+Name: Abhishek Kumar 
+Age=56Y 
+Height=9cm
