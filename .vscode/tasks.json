@@ -3,21 +3,13 @@
         {
             "type": "cppbuild",
             "label": "C/C++: gcc.exe build active file with GTK",
-            "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+            "command": "C:\\msys64\\ucrt64\\bin\\bash.exe",
             "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "`pkg-config --cflags --libs gtk+-3.0`"
+                "-c",
+                "\"C:\\msys64\\ucrt64\\bin\\gcc.exe -fdiagnostics-color=always -g ${file} -o ${fileDirname}\\${fileBasenameNoExtension}.exe $(pkg-config --cflags --libs gtk+-3.0)\""
             ],
             "options": {
-                "cwd": "${fileDirname}",
-                "shell": {
-                    "executable": "C:\\msys64\\ucrt64\\bin\\bash.exe",
-                    "args": ["-c"]
-                }
+                "cwd": "${fileDirname}"
             },
             "problemMatcher": [
                 "$gcc"
