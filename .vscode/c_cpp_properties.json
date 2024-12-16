@@ -15,9 +15,7 @@
                 "C:/msys64/ucrt64/include/freetype2",
                 "C:/msys64/ucrt64/include/libpng16",
                 "C:/msys64/ucrt64/include/pixman-1",
-                "C:/msys64/ucrt64/include/fribidi",
-                "C:/msys64/ucrt64/include/dbus-1.0",
-                "C:/msys64/ucrt64/lib/dbus-1.0/include"
+                "C:/msys64/ucrt64/include/fribidi"
             ],
             "defines": [
                 "_DEBUG",
