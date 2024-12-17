@@ -1,107 +1,146 @@
 // Track personal health like weight,height,age,exercise, diet.
 #include<stdio.h>
-void user_input(void);
-void user_info_print(void);
+#include "input_output.h"
+
+#include <gtk/gtk.h>
+#include <string.h>
+#include <stdlib.h>
 
 
-// STRUCTURE
-typedef struct{
-    int day;
-    int weight;
-    int calorie_burn;
-    int calorie_intake;
-    float BMI;
-}User;
+// Callback function for the login button
+void on_login_button_clicked(GtkWidget *widget, gpointer data) {
+    GtkWidget **entries = (GtkWidget **)data;
+    const gchar *username = gtk_entry_get_text(GTK_ENTRY(entries[0]));
+    const gchar *password = gtk_entry_get_text(GTK_ENTRY(entries[1]));
+    
+    FILE *file;
+    file = fopen("logindata.txt", "r");
+    if (file == NULL) {
+        g_print("Error opening file for reading.\n");
+        return;
+    }
 
-//Global Declaration
-User days[30];
-char name[30];
-int age;
-int height;
-int global_choice;
+    char file_username[100], file_password[100];
+    gboolean login_success = FALSE;
 
-//Exercises Global Decl.
-// printf("\nRunning/Jogging \nCycling \nJumping Rope \nSwimming \nPushup \nSquats \nPlank \nYpga \nStretch \nBurpees \nHigh Knees \nSingle Leg Stand \nBosu Ball \nJump Squats \nTricep Dip \nCruches \nWalking\n");
-int arr_exercies_cal[17]={600,500,700,400,1,1,4,300,150,600,500,200,400,1,1,1,300};
-int Running_Jogging=600;
-int Cycling=500;
-int Jumping_Rope=700;
-int Swimming=400;
-float Push_Up=0.5;
-float Squats=0.4;
-int plank=4;
-int yoga=300;
-int stretch=150;
-int Burpees=600;
-int high_knees=500;
-int single_leg_stand=200;
-int bosu_ball=400;
-int jump_Squats=1;
-int tricep_dip=1;
-float crunches=0.5;
-int walking=300;
+    while (fscanf(file, "%s %s", file_username, file_password) != EOF) {
+        if (strcmp(username, file_username) == 0 && strcmp(password, file_password) == 0) {
+            login_success = TRUE;
+            break;
+        }
+    }
+    fclose(file);
 
-//Main Function
-int main(){
-    user_input();
-    user_info_print();
+    if (login_success) {
+        g_print("Login successful. Username: %s\n", username);
+    } else {
+        g_print("Login failed. Invalid username or password.\n");
+    }
+}
+
+// Callback function for the sign-up button
+void on_signup_button_clicked(GtkWidget *widget, gpointer data) {
+    GtkWidget **entries = (GtkWidget **)data;
+    const gchar *username = gtk_entry_get_text(GTK_ENTRY(entries[0]));
+    const gchar *password = gtk_entry_get_text(GTK_ENTRY(entries[1]));
+
+    FILE *file = fopen("logindata.txt", "a");
+    if (file == NULL) {
+        g_print("Error opening file for writing.\n");
+        return;
+    }
+
+    fprintf(file, "%s %s\n", username, password);
+    fclose(file);
+
+    // Read back the file contents to verify the write operation
+    file = fopen("logindata.txt", "r");
+    if (file == NULL) {
+        g_print("Error opening file for verification.\n");
+        return;
+    }
+
+    g_print("File contents after sign up:\n");
+    char line[200];
+    while (fgets(line, sizeof(line), file) != NULL) {
+        g_print("%s", line);
+    }
+    fclose(file);
+
+    g_print("Sign Up successful. Username: %s added.\n", username);
+}
+
+int main(int argc, char *argv[]) {
+    GtkWidget *window;
+    GtkWidget *grid;
+    GtkWidget *username_label;
+    GtkWidget *password_label;
+    GtkWidget *username_entry;
+    GtkWidget *password_entry;
+    GtkWidget *login_button;
+    GtkWidget *signup_button;
+    GtkWidget *separator;
+
+    gtk_init(&argc, &argv);
+
+    // Create a new window
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "Login Interface");
+    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+    gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+
+    // Create a grid
+    grid = gtk_grid_new();
+    gtk_grid_set_column_spacing(GTK_GRID(grid), 10);
+    gtk_grid_set_row_spacing(GTK_GRID(grid), 10);
+    gtk_container_add(GTK_CONTAINER(window), grid);
+
+    // Create username and password labels
+    username_label = gtk_label_new("Username:");
+    password_label = gtk_label_new("Password:");
+
+    // Create username and password entries
+    username_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(username_entry), "Enter Username");
+    password_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(password_entry), "Enter Password");
+    gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE); // Hide password text
+
+    // Create login button
+    login_button = gtk_button_new_with_label("Login");
+    
+    // Create sign-up button
+    signup_button = gtk_button_new_with_label("Sign Up");
+    
+    // Create a separator
+    separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+
+    // Array to pass both entries to the callback
+    GtkWidget *entries[2] = {username_entry, password_entry};
+    g_signal_connect(login_button, "clicked", G_CALLBACK(on_login_button_clicked), entries);
+    g_signal_connect(signup_button, "clicked", G_CALLBACK(on_signup_button_clicked), entries);
+
+    // Attach widgets to the grid
+    gtk_grid_attach(GTK_GRID(grid), username_label, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), username_entry, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), password_label, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), password_entry, 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), login_button, 1, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), separator, 0, 3, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), signup_button, 1, 4, 1, 1);
+
+    // Connect the window close button to the main quit function
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    // Show all widgets
+    gtk_widget_show_all(window);
+
+    // Main loop
+    gtk_main();
+
     return 0;
 }
 
-// Details Input 
-void user_input(){
-    int choice;
-    FILE *fptr;
-    fptr=fopen("user_info.txt","w");
-    printf("Enter User Name: ");
-    scanf("%[^\n]",&name);
-    printf("Enter your age: ");
-    scanf(" %d",&age);
-    printf("Enter your height: ");
-    scanf(" %d",&height);
-    printf("Enter no of days to input data: ");
-    scanf("%d",&choice);
-    global_choice=choice;
-    fprintf(fptr,"Name: %s \nAge=%dY \nHeight=%dcm\n",name,age,height);
-    for (int i=0;i<choice;i++){
-        printf("*****DAY %d*****\n",i+1);
-        days[i].day=i+1;
-        int num_ex=0;
-        printf("\n1.Running/Jogging    2.Cycling \n3.Jumping Rope    4.Swimming \n5.Pushup    6.Squats \n7.Plank    8.Ypga \n9.Stretch    10.Burpees \n11.High Knees    12.Single Leg Stand \n13.Bosu Ball    14.Jump Squats \n15.Tricep Dip    16.Cruches \n17.Walking\n");
-        printf("Enter Number of Exercises Done: ");
-        scanf("%d",&num_ex);
-        int type_ex;
-        int amt;
-        printf("Enter Exercises One By One\n");
-        days[i].calorie_burn=0;
-        for (int j=0;j<num_ex;j++){
-            printf("Enter Exercise Number: ");
-            scanf("%d",&type_ex);
-            if (type_ex==7){
-                printf("Enter No of minutes: ");
-                scanf("%d",&amt);
-                days[i].calorie_burn+=amt*(arr_exercies_cal[type_ex-1]);
-            }else{
-                printf("Enter No of Reps/Hours: ");
-                scanf("%d",&amt);
-                days[i].calorie_burn+=amt*(arr_exercies_cal[type_ex-1]);
-            }
-        }
-        printf("Enter your weight: ");
-        scanf(" %d",&days[i].weight);
-        printf("Enter your calorie intake: ");
-        scanf(" %d",&days[i].calorie_intake);
-        float height_m=(float)height/100;
-        float height_sq=height_m*height_m;
-        days[i].BMI=days[i].weight/height_sq;
-        fprintf(fptr,"Day%d : Weight=%d - Calorie Burnt=%d - Calorie Intake=%d \n",days[i].day,days[i].weight,days[i].calorie_burn,days[i].calorie_intake,days[i].BMI);
-    }
-    fclose(fptr);
-}
 
-// Detail Printer
-void user_info_print(){
-    for(int i=0;i<global_choice;i++){
-        printf("Day%d : Weight=%d - Calorie Burnt=%d - Calorie Intake=%d \n",days[i].day,days[i].weight,days[i].calorie_burn,days[i].calorie_intake,days[i].BMI);
-    }
-}
+
+
